@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f8fcfa; /* sfondo pagina - very light */
+  --card: #ffffff; /* sfondo card - bianco */
+  --text: #0c1c17; /* testo - very dark blue / almost black */
+  --muted: #6b7280; /* testo secondario - grigio medio */
+  --primary: #2563eb; /* azzurro per azioni (scuro per contrasto) */
+  --danger: #dc2626; /* rimozione */
+  --radius: 14px;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --shadow-1: 0 8px 24px rgba(15, 23, 42, 0.08); /* ombra leggera su sfondo chiaro */
+}
+
+body {
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
+  color: var(--text);
+  background-color: var(--bg);
+}
+
+.container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-auto-rows: minmax(200px, auto);
+  max-width: calc((260px * 5) + (1rem * 4));
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+.container p {
+  color: #46a080;
+}
+
+header {
+  border: solid 1px #e6f4ef;
+  min-height: 10vh;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 4rem;
+}
+
+.container-heading {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+.card {
+  position: relative;
+  background: transparent;
+  border: 1px solid black;
+  position: relative;
+}
+
+.remove-btn {
+ position: absolute;
+ z-index: 1500;
+ top: 1%;
+ right: 1%;
+ background:transparent;
+ border: 0;
+ cursor: pointer;
+}
+
+/* Material-like button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.56rem 1rem;
+  border-radius: 0.75rem;
+  background-color: #0ea56a; /* verde */
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(14, 165, 106, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+/* white circular icon inside the button */
+.btn .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0ea56a;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* interactions */
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(14, 165, 106, 0.2);
+}
+.btn:active {
+  transform: translateY(0);
+  opacity: 0.95;
+}
+/* keep id selector if JS targets it */
+#newBookBtn {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1000;
+
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book library</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Material Design font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- (opzionale) Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="assets/logo.png" class="logo" alt="Logo"></img>
+        <h1>Book Library</h1>
+    </header>
+    <div class="container-heading"><h1>My books</h1></div>
+    <main class="container">
+      
+        <div class="card"></div>
+      
+    </main>
+    <!-- usa la classe .btn e l'icona Material -->
+    <button id="newBookBtn" class="btn">
+      <span class="material-icons icon">add</span>
+      Add New Book
+    </button>
+        <dialog id="newBookDialog">
+            <form id="newBookForm" method="dialog">
+                <label>Title: <input type ="text" name = "title" required></label>
+                <label>Author: <input type="text" name="author" required></label>
+                <label>Pages: <input type="number" name="pages" required></label>
+                <label>Did you read it? <input type="checkbox" name="status"></label>
+                <button type="submit">Add</button>
+                <button type="button" id="cancelBtn">Cancel</button>
+            </form>
+        </dialog>
+<script src="app.js"></script>    
+</body>
+</html>
