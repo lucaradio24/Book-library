@@ -1,70 +1,131 @@
+let myLibrary = [];
+const container = document.querySelector(".container");
 
+function Book(title, author, pages, status) {
+  this.id = crypto.randomUUID();
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.status = status;
+}
 
-// Data structures 
+function addBookToLibrary(title, author, pages, status) {
+  const book = new Book(title, author, pages, status);
+  myLibrary.push(book);
+}
 
-class Book {
-    constructor(title, author, pages, read = false){
-    if(!title){
-        throw new Error("Title can't be empty");
-    }
-    this.title = title;
-    if(!author){
-        throw new Error("Author can't be empty")
-    }
-    this.author = author;
-    if(!Number.isInteger(pages) || pages < 1){
-        throw new Error ("Enter a valid number of pages")
-    }
-    this.pages = pages;
-    this.id = crypto.randomUUID()
-    this.read = read;   
-    }
-    toggleRead() {
-        this.read = !this.read;
-    }
+function removeBook(id) {
+  myLibrary = myLibrary.filter((book) => book.id !== id);
+}
 
-    info(){
-        return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read ? 'read' : 'not read'}`
-    }
+Book.prototype.toggleStatus = function () {
+  this.status = !this.status;
+};
 
-    toJSON() {
-        return {
-    id: this.id,
-    title: this.title,
-    author: this.author,
-    pages: this.pages,
-    read: this.read
+function toggleBook(id) {
+  const book = myLibrary.find((book) => book.id === id);
+  if (book) {
+    book.toggleStatus();
   }
 }
+
+function renderLibrary() {
+  container.innerHTML = "";
+  myLibrary.forEach((book) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.bookId = book.id;
+
+    const img = document.createElement("img");
+    img.src = book.image || "https://placehold.co/257x300";
+    img.alt = book.title;
+    card.appendChild(img);
+
+    const title = document.createElement("h3");
+    title.textContent = book.title;
+
+    const author = document.createElement("p");
+    author.textContent = `Author: ${book.author}`;
+
+    const pages = document.createElement("p");
+    pages.textContent = `Pages: ${book.pages}`;
+
+    const status = document.createElement("p");
+    status.textContent = book.status ? "Read" : "Not read";
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.classList.add("remove-btn");
+    removeBtn.dataset.action = "remove";
+    removeBtn.innerHTML =
+      '<span class="material-icons" aria-hidden="true">close</span>';
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.textContent = "Toggle status";
+    toggleBtn.dataset.action = "toggle";
+
+    card.appendChild(title);
+    card.appendChild(author);
+    card.appendChild(pages);
+    card.appendChild(status);
+    card.appendChild(removeBtn);
+    card.appendChild(toggleBtn);
+
+    container.appendChild(card);
+  });
 }
 
-class Library {
-    constructor(){
-        this.books = []
-    }
+container.addEventListener("click", (e) => {
+  // cerca l'elemento più vicino che espone data-action (può essere il button o lo span interno)
+  const actionEl = e.target.closest("[data-action]");
+  if (!actionEl || !container.contains(actionEl)) return;
 
-    list(start = 0, count){
-        if (count === undefined) count = this.books.length;
-        return this.books.slice(start, start + count);
-    }
+  const card = actionEl.closest(".card");
+  if (!card) return;
 
-    add(title, author, pages, read = false){
-        const book = new Book(title, author, pages, read)
-        this.books.push(book);
-        return book.id;
-    }
+  const id = card.dataset.id;
+  const action = actionEl.dataset.action;
 
-    removeBook(id){
-        const index = this.books.findIndex(b => b.id === id)
-        if (index === -1) return false;
-        this.books.splice(index, 1);
-        return true
-    }
-    getBook(id){
-        return this.books.find(b => b.id === id);
-    }
-    isInLibrary(id){
-        return this.books.some(b => b.id === id);
-    }
+  if (action === "remove") {
+    removeBook(id);
+  } else if (action === "toggle") {
+    toggleBook(id);
+  }
 
-}
+  renderLibrary();
+});
+
+const dialog = document.querySelector("#newBookDialog");
+const form = document.querySelector("#newBookForm");
+const newBookBtn = document.querySelector("#newBookBtn");
+const cancelBtn = document.querySelector("#cancelBtn");
+newBookBtn.addEventListener("click", () => {
+  dialog.showModal();
+});
+cancelBtn.addEventListener("click", () => {
+  dialog.close();
+});
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const title = form.title.value;
+  const author = form.author.value;
+  const pages = Number(form.pages.value);
+  const status = form.status.checked;
+
+  
+
+  addBookToLibrary(title, author, pages, status);
+  renderLibrary();
+  form.reset();
+  dialog.close();
+});
+
+addBookToLibrary("Il nome della rosa", "Umberto Eco", 293, true);
+addBookToLibrary("Harry Potter", "J. K. Rowling", 293, false);
+addBookToLibrary("Harry Potter", "J. K. Rowling", 293, false);
+addBookToLibrary("Harry Potter", "J. K. Rowling", 293, false);
+addBookToLibrary("Harry Potter", "J. K. Rowling", 293, false);
+
+renderLibrary();
