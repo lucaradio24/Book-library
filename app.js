@@ -119,5 +119,5 @@ form.addEventListener("submit", (e) => {
 library.addBook("Il mio giorno", "Luca", 23, true); // Aggiunge un libro di esempio
 library.addBook("Harry Potter", "Giorgia", 23, true); // Aggiunge un libro di esempio
 library.addBook("Lessico", "Antonio", 23, true); // Aggiunge un libro di esempio
-library.addBook("Cacca sotto", "Mina", 23, true); // Aggiunge un libro di esempio
-library.addBook("Pisciazza", "Renato", 23, true); // Aggiunge un libro di esempio
+library.addBook("Avocado", "Mina", 23, true); // Aggiunge un libro di esempio
+library.addBook("Gatorade", "Renato", 23, true); // Aggiunge un libro di esempio
