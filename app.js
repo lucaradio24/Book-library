@@ -103,7 +103,7 @@ form.addEventListener('submit', (e) => {
 addBookToLibrary('Il mio giorno', 'Luca', '23', true);
 addBookToLibrary('Harry Potter', 'Giorgia', '23', true)
 addBookToLibrary('Lessico', 'Antonio', '23', true)
-addBookToLibrary('Cacca sotto', 'Mina', '23', true)
-addBookToLibrary('Pisciazza', 'Renato', '23', true)
+addBookToLibrary('Avocado', 'Mina', '23', true)
+addBookToLibrary('Gatorade', 'Renato', '23', true)
 
 renderLibrary();
