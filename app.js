@@ -1,109 +1,123 @@
-const myLibrary = [];
+class Book {
+  constructor(title, author, pages, status) {
+    this.id = crypto.randomUUID(); // Genera un ID univoco per ogni libro
+    this.title = title; // Salva il titolo del libro
+    this.author = author; // Salva l'autore del libro
+    this.pages = pages; // Salva il numero di pagine
+    this.status = status; // Salva se il libro è stato letto (true) o no (false)
+  }
 
-
-function Book(title, author, pages, status){
-    this.id = crypto.randomUUID();
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.status = status
+  toggleReadStatus() {
+    this.status = !this.status; // Inverte lo stato di lettura (da letto a non letto o viceversa)
+  }
 }
 
-Book.prototype.toggleReadStatus = function() {
-    this.status = !this.status
-    renderLibrary()
-}
+// Definisce la classe Library che gestisce la collezione di libri
+class Library {
+  constructor(containerSelector) {
+    this.books = []; // Inizializza l'array vuoto per i libri
+    this.container = document.querySelector(containerSelector); // Seleziona l'elemento HTML dove mostrare i libri
+  }
 
-function addBookToLibrary(title, author, pages, status){
-    const book = new Book(title, author, pages, status);
-    myLibrary.push(book)
-}
+  addBook(title, author, pages, status) {
+    const book = new Book(title, author, pages, status); // Crea un nuovo oggetto libro
+    this.books.push(book); // Aggiunge il libro all'array
+    this.render(); // Aggiorna la visualizzazione
+  }
 
-function removeBook(id) {
-    const index = myLibrary.findIndex((book) => book.id === id); // restituisce l'index che corrisponde alla condizione book.id === id cercando in tutti i book di myLibrary
-    if (index !== -1) { //se non lo trova restituisce -1, quindi se è diverso da -1 significa che ha trovato
-        myLibrary.splice(index, 1) // rimuove 1 elemento a partire da index
+  toggleBook(id) {
+    const book = this.books.find((book) => book.id === id); // Cerca un libro con l'ID specificato
+    if (book) {
+      // Se trova il libro...
+      book.toggleReadStatus(); // ...cambia il suo stato di lettura
     }
-    renderLibrary()
+    this.render(); // Aggiorna la visualizzazione
+  }
+
+  render() {
+    this.container.innerHTML = ""; // Svuota il contenitore HTML
+    this.books.forEach((book) => {
+      // Per ogni libro nell'array...
+      const card = document.createElement("div"); // Crea un elemento div per la card
+      card.classList.add("card"); // Aggiunge la classe CSS 'card'
+      card.dataset.bookId = book.id; // Memorizza l'ID del libro come attributo data-
+
+      const title = document.createElement("h3"); // Crea un elemento h3 per il titolo
+      title.textContent = book.title; // Imposta il testo del titolo
+
+      const author = document.createElement("p"); // Crea un paragrafo per l'autore
+      author.textContent = `Author: ${book.author}`; // Imposta il testo dell'autore
+
+      const pages = document.createElement("p"); // Crea un paragrafo per le pagine
+      pages.textContent = `Pages: ${book.pages}`; // Imposta il testo delle pagine
+
+      const status = document.createElement("p"); // Crea un paragrafo per lo stato
+      status.textContent = book.status ? "Read" : "Not read yet"; // Mostra "Read" o "Not read yet"
+
+      const removeBtn = document.createElement("button"); // Crea un bottone per rimuovere
+      removeBtn.type = "button"; // Imposta il tipo a button (evita submit accidentali)
+      removeBtn.textContent = "X"; // Imposta il testo del bottone
+      removeBtn.classList.add("remove-btn"); // Aggiunge la classe CSS 'remove-btn'
+      removeBtn.addEventListener("click", () => {
+        // Aggiunge un listener per il click
+        this.removeBook(book.id); // Rimuove il libro quando cliccato, this si riferisce all'istanza libreria
+      });
+
+      const toggleReadBtn = document.createElement("button"); // Crea un bottone per cambiare lo stato
+      toggleReadBtn.type = "button"; // Imposta il tipo a button
+      toggleReadBtn.textContent = "Change read status"; // Imposta il testo del bottone
+      toggleReadBtn.addEventListener("click", () => {
+        // Aggiunge un listener per il click
+        this.toggleBook(book.id); // Cambia lo stato quando cliccato
+      });
+
+      card.appendChild(title); // Aggiunge il titolo alla card
+      card.appendChild(author); // Aggiunge l'autore alla card
+      card.appendChild(pages); // Aggiunge le pagine alla card
+      card.appendChild(status); // Aggiunge lo stato alla card
+      card.appendChild(removeBtn); // Aggiunge il bottone di rimozione alla card
+      card.appendChild(toggleReadBtn); // Aggiunge il bottone di cambio stato alla card
+
+      this.container.appendChild(card); // Aggiunge la card al contenitore HTML
+    });
+  }
 }
 
+// --- UI setup ---
+const library = new Library(".display"); // Crea una nuova libreria collegata all'elemento con classe 'display'
 
+const dialog = document.querySelector("#newBookDialog"); // Seleziona il dialog per aggiungere libri
+const newBookBtn = document.getElementById("newBookBtn"); // Seleziona il bottone per aprire il dialog
+const cancelBtn = document.getElementById("cancelBtn"); // Seleziona il bottone per cancellare
+const form = document.getElementById("newBookForm"); // Seleziona il form
 
-const display = document.querySelector('.display');
-function renderLibrary(){
-    display.innerHTML = '';
-    myLibrary.forEach((book) => {
-      const card = document.createElement('div');
-      card.classList.add('card')
-      card.dataset.bookId = book.id
+newBookBtn.addEventListener("click", () => {
+  // Quando il bottone viene cliccato...
+  dialog.showModal(); // ...mostra il dialog
+});
 
-      const title = document.createElement('h3');
-      title.textContent = book.title;
-    
-      const author = document.createElement ('p');
-      author.textContent = `Author: ${book.author}`;
+cancelBtn.addEventListener("click", () => {
+  // Quando il bottone cancel viene cliccato...
+  dialog.close(); // ...chiude il dialog
+});
 
-      const pages = document.createElement ('p');
-      pages.textContent = `Pages: ${book.pages}`;
+form.addEventListener("submit", (e) => {
+  // Quando il form viene inviato...
+  e.preventDefault(); // ...previene il comportamento predefinito (ricarica pagina)
 
-      const status = document.createElement('p');
-      status.textContent = book.status ? 'Read' : 'Not read yet' ;
+  const title = form.title.value; // Prende il valore del campo titolo
+  const author = form.author.value; // Prende il valore del campo autore
+  const pages = Number(form.pages.value); // Converte in numero il valore del campo pagine
+  const status = form.status.checked; // Prende il valore del checkbox status (true/false)
 
-      const removeBtn = document.createElement('button');
-      removeBtn.textContent = 'X'  
-      removeBtn.addEventListener('click', () => {
-        removeBook(book.id)
-      })
+  library.addBook(title, author, pages, status); // Aggiunge un nuovo libro alla libreria
+  form.reset(); // Resetta il form
+  dialog.close(); // Chiude il dialog
+});
 
-      const toggleReadBtn = document.createElement('button');
-      toggleReadBtn.textContent = 'Change read status';
-      toggleReadBtn.addEventListener('click', () => {
-        book.toggleReadStatus()
-      })
-
-      card.appendChild(title);
-      card.appendChild(author);
-      card.appendChild(pages);
-      card.appendChild(status);  
-      card.appendChild(removeBtn);
-      card.appendChild(toggleReadBtn);
-
-      display.appendChild(card);
-    } )
-}
-
-
-const dialog = document.querySelector('#newBookDialog')
-const newBookBtn = document.getElementById('newBookBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-const form = document.getElementById('newBookForm')
-
-newBookBtn.addEventListener('click', () => {
-    dialog.showModal()
-})
-
-cancelBtn.addEventListener('click', () => {
-    dialog.close();
-})
-
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const title = form.title.value;
-    const author = form.author.value;
-    const pages = Number(form.pages.value);
-    const status = form.status.checked;
-
-    addBookToLibrary(title, author, pages, status);
-    renderLibrary();
-    form.reset();
-    dialog.close();
-})
-
-addBookToLibrary('Il mio giorno', 'Luca', '23', true);
-addBookToLibrary('Harry Potter', 'Giorgia', '23', true)
-addBookToLibrary('Lessico', 'Antonio', '23', true)
-addBookToLibrary('Cacca sotto', 'Mina', '23', true)
-addBookToLibrary('Pisciazza', 'Renato', '23', true)
-
-renderLibrary();
+// --- Dati di esempio ---
+library.addBook("Il mio giorno", "Luca", 23, true); // Aggiunge un libro di esempio
+library.addBook("Harry Potter", "Giorgia", 23, true); // Aggiunge un libro di esempio
+library.addBook("Lessico", "Antonio", 23, true); // Aggiunge un libro di esempio
+library.addBook("Cacca sotto", "Mina", 23, true); // Aggiunge un libro di esempio
+library.addBook("Pisciazza", "Renato", 23, true); // Aggiunge un libro di esempio
